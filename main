@@ -1,0 +1,41 @@
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+import datetime
+TOKEN = 7170588378:AAEyIJDeFRGdlHvIuAsil0lySN-1SegyZeU
+# Функція для обробки команди /start
+def start(update, context):
+    update.message.reply_text("Привіт! Я бот, який нагадує повторити вивчене через 24 години, 1 тиждень та 1 місяць.")
+
+# Функція для обробки повідомлення користувача
+def echo(update, context):
+    # Отримання повідомлення користувача
+    message_text = update.message.text
+
+    # Відправлення повідомлення через 24 години
+    context.job_queue.run_once(callback, 24 * 3600, context=update.message.chat_id, text=message_text)
+
+    # Відправлення повідомлення через 1 тиждень
+    context.job_queue.run_once(callback, 7 * 24 * 3600, context=update.message.chat_id, text=message_text)
+
+    # Відправлення повідомлення через 1 місяць
+    context.job_queue.run_once(callback, 30 * 24 * 3600, context=update.message.chat_id, text=message_text)
+
+# Функція для відправлення повідомлення через заданий час
+def callback(context):
+    chat_id = context.job.context
+    text = context.job.kwargs['text']
+    context.bot.send_message(chat_id=chat_id, text=f"Ваше повідомлення: {text}")
+
+def main():
+    updater = Updater("YOUR_BOT_TOKEN", use_context=True)
+    dp = updater.dispatcher
+
+    # Додавання обробників команд
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
+
+    # Запуск бота
+    updater.start_polling()
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
