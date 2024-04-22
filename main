@@ -11,7 +11,7 @@ def echo(update, context):
     message_text = update.message.text
 
     # Відправлення повідомлення через 24 години
-    context.job_queue.run_once(callback, 24 * 3600, context=update.message.chat_id, text=message_text)
+    context.job_queue.run_once(callback, 24, context=update.message.chat_id, text=message_text)
 
     # Відправлення повідомлення через 1 тиждень
     context.job_queue.run_once(callback, 7 * 24 * 3600, context=update.message.chat_id, text=message_text)
